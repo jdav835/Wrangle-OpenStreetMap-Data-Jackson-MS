@@ -65,7 +65,9 @@ def get_element(osm_file, tags=('node', 'way', 'relation')):
             root.clear()
 
 
-#### *******************************************************
+# ================================================== #
+#           Functions to View Phones/Streets         #
+# ================================================== #
 
 def find_phone(filename):
         for element in get_element(filename, tags="('node')"):
@@ -85,3 +87,33 @@ def cleanphone(phone):
 
     
     return(formatted_phone)
+    
+def find_street(filename):
+    for element in get_element(filename, tags=('node')):
+        for child in element:
+            if child.attrib['k'] == "addr:street":
+                get_abbr(child.attrib['v'], mapping)
+                
+street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
+mapping = { "st": "Street",
+            "St.": "Street", 
+            "Ave": "Avenue",
+            "Rd": "Road",
+            "Ln": "Lane",
+            "Dr.": "Drive",
+            "Pkwy": "Parkway",
+            "Cir": "Circle",
+            "Dr": "Drive",
+            "N" : "North",
+            "S": "South",
+            "E": "East",
+            "W": "West"
+            }
+
+
+def get_abbr(name, mapping):
+
+    m = street_type_re.search(name)
+    street_type = m.group()
+    if street_type in mapping:
+        print name
